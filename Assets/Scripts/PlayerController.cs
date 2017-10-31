@@ -1,17 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
 	private Vector3 solutionRotation;
 	private Vector3 mousePos, prevMousePos;
 	private bool playing;
-	public float precision;
+	public float precision, timeLeft;
 	public int objSelection;
 
 	void Start () {
 		solutionRotation = transform.rotation.eulerAngles;
+		timeLeft = 0.5f;
 		mousePos = new Vector3 (0, 0, 0);
 		prevMousePos = new Vector3 (0, 0, 0);
 		playing = true;
@@ -40,18 +42,23 @@ public class PlayerController : MonoBehaviour {
 			Mathf.Abs(transform.rotation.eulerAngles.y - solutionRotation.y) <= precision && 
 			GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<CameraController> ().positionChecked && !(Input.GetKey(KeyCode.Mouse0))) {
 			playing = false;
-			if (transform.rotation.eulerAngles.z - solutionRotation.z <= 0.05f)
-				transform.Rotate (0, 0, 0.05f);
+			if (transform.rotation.eulerAngles.z - solutionRotation.z <= 0.005f)
+				transform.Rotate (0, 0, 0.005f);
 			else
-				transform.Rotate (0, 0, -0.05f);
-			if (transform.rotation.eulerAngles.x - solutionRotation.x <= 0.05f)
-				transform.Rotate (0.05f, 0, 0);
+				transform.Rotate (0, 0, -0.005f);
+			if (transform.rotation.eulerAngles.x - solutionRotation.x <= 0.005f)
+				transform.Rotate (0.005f, 0, 0);
 			else
-				transform.Rotate (-0.05f, 0, 0);
-			if (transform.rotation.eulerAngles.y - solutionRotation.y <= 0.05f)
-				transform.Rotate (0, 0.05f, 0);
+				transform.Rotate (-0.005f, 0, 0);
+			if (transform.rotation.eulerAngles.y - solutionRotation.y <= 0.050f)
+				transform.Rotate (0, 0.005f, 0);
 			else
-				transform.Rotate (0, -0.05f, 0);
+				transform.Rotate (0, -0.005f, 0);
+			timeLeft -= Time.deltaTime;
+			if (timeLeft <= 0.0f) {
+				SceneManager.LoadScene (0);
+			}
+			Debug.Log (timeLeft);
 		}
 		if (Input.GetKey (KeyCode.Mouse0) && playing && !(Input.GetKey(KeyCode.LeftControl)) && !(Input.GetKey(KeyCode.LeftShift))) {
 			if ((objSelection == 0 && tag == "Normal1") || (objSelection == 1 && tag == "Normal2"))
